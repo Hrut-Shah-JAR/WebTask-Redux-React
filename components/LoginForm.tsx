@@ -1,13 +1,23 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectAuthLoading, selectAuth } from '@/store/selectors';
+import { selectAuthLoading, selectAuth, selectIsAuthenticated } from '@/store/selectors';
 import { loginUser } from '@/store/thunks';
 
 export function LoginForm() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const auth = useAppSelector(selectAuth);
   const loading = useAppSelector(selectAuthLoading);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,67 +30,70 @@ export function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_left,#d9f99d_0,#f6f7f3_34%,#eef2f0_100%)] px-4">
-      <div className="bg-white rounded-lg shadow-xl ring-1 ring-slate-200 p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-slate-950 mb-2">WealthLedger</h1>
-        <p className="text-center text-slate-600 mb-8">Personal Finance Dashboard</p>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              defaultValue="demo"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="Enter username"
-            />
-            <p className="text-xs text-gray-500 mt-1">Default: demo</p>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              defaultValue="demo123"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="Enter password"
-            />
-            <p className="text-xs text-gray-500 mt-1">Default: demo123</p>
-          </div>
-
-          {auth.error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {auth.error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-emerald-700 text-white font-semibold rounded-lg hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-xs text-amber-950">
-            <strong>Demo Credentials:</strong>
-            <br />
-            Username: <code className="bg-white px-1">demo</code>
-            <br />
-            Password: <code className="bg-white px-1">demo123</code>
-          </p>
-        </div>
+    <section className="relative overflow-hidden rounded-lg border border-white/10 bg-slate-950/80 p-6 shadow-2xl shadow-emerald-950/30 backdrop-blur">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
+      <div className="mb-6">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300">Secure access</p>
+        <h2 className="text-3xl font-bold text-white">Enter WealthLedger</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-400">
+          Sign in to load your portfolio, transactions, alerts, and currency workspace.
+        </p>
       </div>
-    </div>
+
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div>
+          <label htmlFor="username" className="mb-2 block text-sm font-medium text-slate-200">
+            Username
+          </label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            defaultValue="demo"
+            className="w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+            placeholder="Enter username"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-200">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            defaultValue="demo123"
+            className="w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20"
+            placeholder="Enter password"
+          />
+        </div>
+
+        {auth.error && (
+          <div className="rounded-md border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
+            {auth.error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-md bg-emerald-400 px-4 py-3 font-bold text-slate-950 shadow-lg shadow-emerald-950/40 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? 'Opening dashboard...' : 'Login to dashboard'}
+        </button>
+      </form>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 rounded-md border border-amber-300/20 bg-amber-300/10 p-4 text-xs text-amber-100">
+        <span>
+          <strong className="block text-amber-200">Username</strong>
+          <code>demo</code>
+        </span>
+        <span>
+          <strong className="block text-amber-200">Password</strong>
+          <code>demo123</code>
+        </span>
+      </div>
+    </section>
   );
 }

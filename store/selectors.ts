@@ -229,6 +229,25 @@ export const selectSpendingCategoryRows = createSelector(
     }))
 );
 
+export const selectSpendingChartData = createSelector(
+  [selectMonthlySpendingByCategory],
+  (spending) =>
+    Object.entries(spending).map(([category, amount]) => ({
+      category,
+      amount: Math.round(amount * 100) / 100,
+    }))
+);
+
+export const selectPortfolioChartData = createSelector(
+  [selectPortfolioBreakdown],
+  (breakdown) =>
+    breakdown.map((asset) => ({
+      symbol: asset.symbol,
+      value: Math.round(asset.value * 100) / 100,
+      percentage: Math.round(asset.percentage * 10) / 10,
+    }))
+);
+
 export const selectTransactionRows = createSelector(
   [selectVisibleTransactions],
   (transactions) =>
@@ -249,13 +268,17 @@ export const selectConvertedCurrencyRows = createSelector(
     (_: RootState, amount: number) => amount,
   ],
   (baseCurrency, rates, targetCurrencies, amount) =>
-    targetCurrencies.map((currency) => ({
-      currency,
-      convertedAmount:
-        currency === baseCurrency ? amount : amount * (rates[currency] ?? 1),
-      formattedAmount: (currency === baseCurrency ? amount : amount * (rates[currency] ?? 1)).toLocaleString(
-        'en-US',
-        { maximumFractionDigits: 2 }
-      ),
-    }))
+    targetCurrencies.map((currency) => {
+      const baseRate = rates[baseCurrency] ?? 1;
+      const targetRate = rates[currency] ?? 1;
+      const convertedAmount = currency === baseCurrency ? amount : (amount / baseRate) * targetRate;
+
+      return {
+        currency,
+        convertedAmount,
+        formattedAmount: convertedAmount.toLocaleString('en-US', {
+          maximumFractionDigits: 2,
+        }),
+      };
+    })
 );

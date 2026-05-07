@@ -16,21 +16,21 @@ export function Header() {
   if (!isAuthenticated) return null;
 
   return (
-    <header className="bg-slate-950 text-white shadow-lg">
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/85 text-white shadow-2xl shadow-black/30 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">WealthLedger</h1>
-          <p className="text-emerald-100 text-sm">Personal Finance Dashboard</p>
+          <h1 className="text-2xl font-black tracking-tight">WealthLedger</h1>
+          <p className="text-emerald-300 text-sm">Personal Finance Dashboard</p>
         </div>
 
         <div className="flex items-center gap-4">
           <div className="text-right">
             <p className="font-semibold">{username}</p>
-            <p className="text-sm text-emerald-100">Connected</p>
+            <p className="text-sm text-emerald-300">Connected</p>
           </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-semibold transition-colors"
+            className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-md font-semibold transition-colors"
           >
             Logout
           </button>
